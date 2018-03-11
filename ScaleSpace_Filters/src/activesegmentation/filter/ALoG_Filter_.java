@@ -15,8 +15,6 @@ import ijaux.scale.*;
 import java.awt.*;
 import java.util.*;
 
-import javax.print.attribute.standard.PrinterLocation;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -197,8 +195,9 @@ public class ALoG_Filter_ implements ExtendedPlugInFilter, DialogListener, IFilt
 		float[] kern_diff2= sp.diff2Gauss1D();
 		GScaleSpace.flip(kern_diff2);
 		System.out.println("kernx2 :"+kern_diff2.length);
-		float[] kern_diff1=sp.diffGauss1D();
-		System.out.println("kernx1:"+kern_diff1.length);
+		//float[] kern_diff1=sp.diffGauss1D();
+		float[] kern_diff1=sp.diffNGauss1D(1);
+		System.out.println("kernx1: "+kern_diff1.length);
 		GScaleSpace.flip(kern_diff1);
 
 		kernel=new float[4][];

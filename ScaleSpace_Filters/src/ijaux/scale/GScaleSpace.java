@@ -6,23 +6,29 @@ import ij.process.FloatProcessor;
 import static java.lang.Math.*;
 
 /*
-* @version 	    1.2.1 21 March 2014
+* @version 	   	1.2.2 04 Feb 2018
+* 				- bug fixes in kernel lengths
+*  
+* 				1.2.1 21 March 2014
 * 			
 * 				1.2 20 Oct 2013
 * 				- fixed a bug in the computation of computeLapNKernel2D
 * 				- added double precision computations
 * 				- added power of the Laplacian (poweLap) computation
+* 
 * 				1.1.6
 * 				- refactoring getSigma -> getS
+* 
 * 				1.1.5
 * 				- regression to hw=3.0*sigma
+* 
 * 				1.1 17 Jul 2013
 * 				- sampling computation change hw=4.0*sigma
 * 				- code refactoring, parameter name change
 * 				- added getSigma
 * 
 * 				1.0	5 Feb 2013
-*   
+* 				- initial version  
 * 
 * @author Dimiter Prodanov
 * 		  IMEC
@@ -128,7 +134,7 @@ public class GScaleSpace {
 /////////////////////////////////////////////////////////
 	
 	public static void scnorm(float[] kern, double sigma, int n) {
-		sigma=Math.pow(sigma, n);
+		sigma=pow(sigma, n);
 		for (int i=0; i<kern.length; i++) {
 			kern[i]*=sigma;
 		}
@@ -179,7 +185,7 @@ public class GScaleSpace {
 	 	
 		float[] kernel=new float[sz];
 
-		final double PIs=1/Math.sqrt(2*PI*sigma2);
+		final double PIs=1/sqrt(2*PI*sigma2);
 		if (debug)  
 			System.out.print(" \n");
 		 
@@ -187,7 +193,7 @@ public class GScaleSpace {
 		 	
 			final double x2=u*u;
 			final int idx=u+r ;
-			kernel[idx]=(float)(Math.exp(-0.5*x2/sigma2)*PIs);
+			kernel[idx]=(float)(exp(-0.5*x2/sigma2)*PIs);
 			if (debug) 
 				System.out.print(kernel[idx] +" ");
 		}
@@ -208,7 +214,7 @@ public class GScaleSpace {
 	 	
 		float[] kernel=new float[sz];
 
-		final double PIs=1/Math.sqrt(2*PI*sigma2);
+		final double PIs=1/sqrt(2*PI*sigma2);
 		if (debug)  
 			System.out.print(" \n");
 		 
@@ -216,7 +222,7 @@ public class GScaleSpace {
 		 	
 			final double x2=u*u;
 			final int idx=u+r ;
-			kernel[idx]=(float)(Math.exp(-0.5*x2/sigma2)*PIs);
+			kernel[idx]=(float)(exp(-0.5*x2/sigma2)*PIs);
 			if (debug) 
 				System.out.print(kernel[idx] +" ");
 		}
@@ -240,7 +246,7 @@ public class GScaleSpace {
 	 	
 		double[] kernel=new double[sz];
 
-		final double PIs=1/Math.sqrt(2*PI*sigma2);
+		final double PIs=1/sqrt(2*PI*sigma2);
 		if (debug)  
 			System.out.print(" \n");
 		 
@@ -248,7 +254,7 @@ public class GScaleSpace {
 		 	
 			final double x2=u*u;
 			final int idx=u+r ;
-			kernel[idx]= Math.exp(-0.5*x2/sigma2)*PIs;
+			kernel[idx]= exp(-0.5*x2/sigma2)*PIs;
 			if (debug) 
 				System.out.print(kernel[idx] +" ");
 			 
@@ -315,15 +321,16 @@ public class GScaleSpace {
 		int sz=2*r+1;
 
 		//double sigma2=((double)r/3.0+1/6.0);
-		double sigma=((double)sz)/(2*swidth);
+		double sigma=((double)sz)/(2.0*swidth);
 		
 		double s=sigma*sigma;
 		
-		System.out.println("s^2: "+s);
+		//System.out.println("s^2: "+s);
 		System.out.println("width: "+swidth);
+		
 		float[] kernel=new float[sz];
-  
-		final double PIs=1/sqrt(2*Math.PI*s)/s;
+		System.out.println("sz: "+sz);
+		final double PIs=1/sqrt(2.0*PI*s)/s;
 		for (int u=-r; u<=r; u++) {
 			final double x2=u*u;
 			final int idx=u+r ;
@@ -347,7 +354,7 @@ public class GScaleSpace {
 		
 		float[] kernel=new float[sz];
   
-		final double PIs=1/sqrt(2*Math.PI*s)/s;
+		final double PIs=1/sqrt(2*PI*s)/s;
 		for (int u=-r; u<=r; u++) {
 			final double x2=u*u;
 			final int idx=u+r ;
@@ -371,11 +378,11 @@ public class GScaleSpace {
 		
 		double[] kernel=new double[sz];
   
-		final double PIs=1/Math.sqrt(2*PI*s)/s;
+		final double PIs=1/sqrt(2*PI*s)/s;
 		for (int u=-r; u<=r; u++) {
 			final double x2=u*u;
 			final int idx=u+r ;
-			kernel[idx]=(u*Math.exp(-0.5*x2/s)*PIs);
+			kernel[idx]=(u*exp(-0.5*x2/s)*PIs);
 		 
 		}
 		 
@@ -402,7 +409,7 @@ public class GScaleSpace {
 		
 		float[] kernel=new float[sz];
  
-		final double PIs=1/Math.sqrt(2*PI*sigma2)/sigma2/sigma2;
+		final double PIs=1/sqrt(2*PI*sigma2)/sigma2/sigma2;
 		if (debug)  
 			System.out.print(" \n");
 	 
@@ -426,14 +433,14 @@ public class GScaleSpace {
 	public static float[] diff2Gauss1D(float width, double sigma2) {
 		
 		//swidth=width; // we sample at least 3* sigma
-		int r=(int)(width*Math.sqrt(sigma2));
+		int r=(int)(width*sqrt(sigma2));
 		//System.out.print("r: "+r);
 		IJ.log("R:"+r);
 		int sz=2*r+1;
 				
 		float[] kernel=new float[sz];
  
-		final double PIs=1/Math.sqrt(2*PI*sigma2)/sigma2/sigma2;
+		final double PIs=1/sqrt(2*PI*sigma2)/sigma2/sigma2;
 		if (debug)  
 			System.out.print(" \n");
 	 
@@ -465,7 +472,7 @@ public class GScaleSpace {
 	}
 	
 	// KONOPS
-	public static float[] diffNGauss1D(float width,float sigma,int n) {
+	public static float[] diffNGauss1D(float width, float sigma, int n) {
 		//debug=true;
 		double[] hk = hermiteCoef(n)[n];
 		if (debug) {
@@ -493,7 +500,7 @@ public class GScaleSpace {
 		if (debug)  
 			System.out.println("z "+z);
 		
-		double PIs=1/Math.sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
+		double PIs=1/sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
 		if (z>0) {
 			PIs=-PIs;
 		}
@@ -536,7 +543,7 @@ public class GScaleSpace {
 		int sz=2*r+1;
 		
 		//final double sigma2=((double)r/3.0+1/6)*((double)r/3.0 +1/6.0);
-		double sigma=((double)sz)/(2*swidth);
+		double sigma=((double)sz)/(2.0*swidth);
 		double s=sigma*sigma;
 		float[] kernel=new float[sz];
 	 
@@ -544,7 +551,7 @@ public class GScaleSpace {
 		if (debug)  
 			System.out.println("z "+z);
 		
-		double PIs=1/Math.sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
+		double PIs=1/sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
 		if (z>0) {
 			PIs=-PIs;
 		}
@@ -594,7 +601,7 @@ public class GScaleSpace {
 		if (debug)  
 			System.out.println("z "+z);
 		
-		double PIs=1/Math.sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
+		double PIs=1/sqrt(2.0*PI*s)/pow(s, ((double)n)/2.0);
 		if (z>0) {
 			PIs=-PIs;
 		}
@@ -635,7 +642,7 @@ public class GScaleSpace {
 		
 		float[] kernel=new float[sz*sz];
  
-		final double PIs=0.5/Math.PI/sigma2/sigma2/sigma2;
+		final double PIs=0.5/PI/sigma2/sigma2/sigma2;
 
 		for (int u=-r; u<=r; u++) {
 			if (debug)
@@ -643,7 +650,7 @@ public class GScaleSpace {
 			for (int w=-r; w<=r; w++) {
 				final double x2=u*u+w*w;
 				final int idx=sz*(u+r) + (w+r);
-				kernel[idx]=(float)((x2 -2*sigma2)*Math.exp(-0.5*x2/sigma2)*PIs);
+				kernel[idx]=(float)((x2 -2*sigma2)*exp(-0.5*x2/sigma2)*PIs);
 				if (debug)
 					System.out.print(kernel[idx] +" ");		
 			}
@@ -684,7 +691,7 @@ public class GScaleSpace {
 		float[] kernel=new float[sz*sz];
 	
 		//int z= (n & 1);
-		double PIs=0.5/Math.PI/sigma2/Math.pow(sigma2, n);
+		double PIs=0.5/PI/sigma2/Math.pow(sigma2, n);
 
 		if (debug)
 			System.out.println(PIs  +" Gaussian derivative kernel 2D order " +n);	
@@ -699,7 +706,7 @@ public class GScaleSpace {
 				double p=powerLap(n, bincoef, hercoef, x,y);
 				
 				final int idx=sz*(u+r) + (w+r);
-				kernel[idx]=(float)(p*Math.exp(-0.5*r2/sigma2)*PIs);
+				kernel[idx]=(float)(p*exp(-0.5*r2/sigma2)*PIs);
 				if (debug)
 					System.out.print(kernel[idx] +" ");		
 			
